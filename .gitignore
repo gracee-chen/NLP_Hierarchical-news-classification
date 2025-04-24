@@ -1,0 +1,4 @@
+echo "__pycache__/
+*.csv
+outputs/
+.DS_Store" > .gitignore
