@@ -39,7 +39,6 @@ def load_models():
         l2_base_path = os.path.join(current_dir, "outputs/l2")
         if os.path.exists(l2_base_path):
             existing_dirs = os.listdir(l2_base_path)
-            # 移除调试信息
             # st.write("Found level 2 directories:", existing_dirs)
             
             for parent in l1_id2label.values():
@@ -53,7 +52,6 @@ def load_models():
                         dir_name = matching_dirs[0]
                     else:
                         # Skip this category if no matching directory found
-                        # 移除调试信息
                         # st.info(f"No directory found for category: {parent}")
                         continue
                 
@@ -88,10 +86,8 @@ def load_models():
                     
                     l2_models[parent] = l2_model
                     l2_id2labels[parent] = l2_id2label
-                    # 移除调试信息
                     # st.success(f"Successfully loaded level 2 model for {parent}")
                 except Exception as e:
-                    # 移除调试信息
                     # st.warning(f"Unable to load level 2 classification model for {parent}: {str(e)}")
                     pass
         
@@ -103,7 +99,6 @@ def load_models():
 # Load models
 tokenizer, l1_model, l1_id2label, l2_models, l2_id2labels = load_models()
 
-# 移除调试信息
 # st.write(f"Loaded {len(l2_models)} level 2 models for categories: {list(l2_models.keys())}")
 
 # Continue only if models loaded successfully

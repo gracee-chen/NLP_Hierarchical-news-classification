@@ -1,14 +1,14 @@
 # config.py
-CSV_PATH   = "filtered_level1.csv"
-MODEL_NAME = "bert-base-uncased"
+CSV_PATH   = "./data/processed/filtered_level.csv"
+MODEL_NAME = "bert-base-uncased" #pretrained-model we used
 MAX_LEN    = 256
 
-# 分离一层和二层的训练参数
+# first level parameter
 L1_BATCH_SIZE = 16
 L1_EPOCHS     = 4
 L1_LR         = 2e-5
 
-# 二层使用更高的学习率和更多训练轮数
+# second level parameter
 L2_BATCH_SIZE = 8
 L2_EPOCHS     = 8
 L2_LR         = 5e-5

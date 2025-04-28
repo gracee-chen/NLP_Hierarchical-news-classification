@@ -16,10 +16,10 @@ def get(cid: int) -> float:
     if len(h) < 20:
         return _BASE
     
-    # 计算准确率，根据历史表现动态调整阈值
+    # calculate accuracy and dynamically adjust thresholds based on historical performance
     acc = np.mean(h)
     
-    # 为准确率低的类别设置更高的阈值，防止错误传播
+    # set higher thresholds for low accuracy
     if acc < 0.7:
         adjustment = (_BASE - acc) * _MAX_SHIFT * 1.2
     else:

@@ -13,10 +13,10 @@ def compute_metrics(eval_pred):
     logits, labels = eval_pred
     preds = logits.argmax(axis=-1)
     
-    # 计算准确率
+    # accuracy
     acc = accuracy_score(labels, preds)
     
-    # 计算精确率、召回率和F1值
+    # f1, precision, recall
     precision, recall, f1, _ = precision_recall_fscore_support(
         labels, preds, average='macro'
     )
@@ -29,47 +29,47 @@ def compute_metrics(eval_pred):
     }
 
 def main():
-    # 打印当前的transformers版本，帮助调试
-    print(f"当前transformers版本: {transformers.__version__}")
+    print(f"transformers version: {transformers.__version__}")
     
+    # step1: data preparation
     df = load_level1_df()
     label2id, id2label = make_label_maps(df["level1"])
     ds = encode_dataset(df, label2id, "level1")
     train_ds, val_ds, test_ds = split_dataset(ds)
 
+    # step2: model initialization (label corresponding to level1)
     model = AutoModelForSequenceClassification.from_pretrained(
         MODEL_NAME, num_labels=len(label2id), id2label=id2label,
         label2id=label2id)
 
-    # 根据版本不同调整参数
+    # step3: agrs
     args = TrainingArguments(
         output_dir=L1_OUT,
         learning_rate=L1_LR,
         per_device_train_batch_size=L1_BATCH_SIZE,
         per_device_eval_batch_size=L1_BATCH_SIZE,
         num_train_epochs=L1_EPOCHS,
-        # 移除可能不兼容的参数
         logging_steps=50,
         save_steps=50,
         eval_steps=50,
-        eval_strategy="steps",  # 适用于旧版本的参数名称
-        save_strategy="steps",  # 适用于旧版本的参数名称
+        eval_strategy="steps",  
+        save_strategy="steps",  
         load_best_model_at_end=True,
         metric_for_best_model="eval_loss",
-        weight_decay=0.01,  # 添加权重衰减，减少过拟合
+        weight_decay=0.01,
     )
 
+    # step4: train
     trainer = Trainer(model=model, args=args,
                       train_dataset=train_ds, eval_dataset=val_ds,
                       compute_metrics=compute_metrics)
     trainer.train()
     trainer.save_model(f"{L1_OUT}/best")
     
-    # 在测试集上评估
+    # test
     results = trainer.evaluate(test_ds)
     print(f"测试结果: {results}")
     
-    # 保存评估结果
     import os
     os.makedirs(L1_OUT, exist_ok=True)
     with open(f"{L1_OUT}/test_results.txt", "w") as f:
